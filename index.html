@@ -192,6 +192,10 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 #ledger.scroll::-webkit-scrollbar-thumb{background:rgba(25,224,255,.4);border-radius:8px}
 #ledger.scroll::-webkit-scrollbar-track{background:transparent}
 </style>
+<style>
+  html{height:100%;}
+  body{height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:14px;padding-bottom:calc(env(safe-area-inset-bottom) + 60px);}
+</style>
 </head>
 <body>
 <div class=&quot;wrap&quot;>
@@ -573,6 +577,10 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 .celbtn{display:block;width:100%;margin-top:18px;font-family:var(--disp);font-size:13px;letter-spacing:1px;color:#1a0a04;background:linear-gradient(180deg,var(--volt),var(--flame));border:none;border-radius:9px;padding:13px;cursor:pointer;text-transform:uppercase}
 @media (prefers-reduced-motion:reduce){.game.on .ball{animation:none}.champword{animation:none}.boomtag{animation:none}.cfx{display:none}}
 </style>
+<style>
+  html{height:100%;}
+  body{height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:14px;padding-bottom:calc(env(safe-area-inset-bottom) + 60px);}
+</style>
 </head>
 <body>
 <div class=&quot;wrap&quot;>
@@ -853,28 +861,28 @@ renderScore();renderDecs();renderList();renderCase();
     --disp:'Anton',sans-serif; --body:'Oswald',sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0}
-  body{background:
+  html{height:100%}
+  body{margin:0;height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    background:
       repeating-linear-gradient(115deg, rgba(0,194,74,.05) 0 2px, transparent 2px 26px),
       radial-gradient(1100px 460px at 50% -8%, rgba(0,194,74,.18), transparent 62%),
       var(--bg);
-    color:var(--ink);font-family:var(--body);
-    padding:calc(env(safe-area-inset-top) + 26px) 15px 120px;line-height:1.2;
-    background-attachment:fixed;min-height:100vh}
+    color:var(--ink);font-family:var(--body);line-height:1.2;
+    padding:14px 15px calc(env(safe-area-inset-bottom) + 60px);
+    background-attachment:fixed}
 
-  .cap{position:relative;margin:0 -15px 20px;padding:26px 15px 22px;overflow:hidden;
+  .cap{position:relative;margin:0 -15px 20px;padding:22px 15px 20px;overflow:hidden;
     background:linear-gradient(135deg,var(--g) 0%,#00963f 60%,#046b32 100%);
     border-bottom:5px solid var(--lime)}
   .cap:before{content:&quot;&quot;;position:absolute;inset:0;opacity:.25;
     background:repeating-linear-gradient(115deg,#000 0 3px,transparent 3px 16px)}
   .bolt{position:absolute;right:-6px;top:-16px;font-size:150px;line-height:1;color:var(--lime);
     opacity:.22;transform:rotate(12deg);pointer-events:none}
-  h1{position:relative;font-family:var(--disp);font-size:clamp(46px,17vw,86px);line-height:.86;margin:0;
+  h1{position:relative;font-family:var(--disp);font-size:clamp(44px,16vw,80px);line-height:.86;margin:0;
     color:#fff;text-transform:uppercase;letter-spacing:.01em;transform:skewX(-9deg);
     text-shadow:4px 4px 0 var(--black),0 0 26px rgba(0,0,0,.35)}
   .tag{position:relative;margin-top:10px;font-family:var(--disp);font-size:16px;letter-spacing:.12em;
     color:var(--black);text-transform:uppercase;transform:skewX(-9deg)}
-  .tag em{color:#fff;font-style:normal}
 
   .stats{display:flex;gap:9px;margin-bottom:14px}
   .stat{flex:1;background:var(--panel2);border:2px solid var(--line);border-radius:4px;padding:12px 6px;text-align:center;
@@ -886,16 +894,22 @@ renderScore();renderDecs();renderList();renderCase();
   .pbar{height:100%;background:repeating-linear-gradient(115deg,var(--g) 0 14px,var(--g2) 14px 20px);
     box-shadow:0 0 14px rgba(0,194,74,.8);transition:width .4s}
 
+  .phdr{font-family:var(--disp);font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);
+    transform:skewX(-6deg);margin:22px 0 10px;padding-left:2px}
+  .phdr span{color:var(--mut);font-size:13px}
+
   .wk{border:2px solid var(--line);border-radius:5px;margin-bottom:11px;background:var(--panel);
     box-shadow:4px 4px 0 rgba(0,0,0,.45);overflow:hidden}
   .wk.done{border-color:var(--g);box-shadow:4px 4px 0 rgba(0,194,74,.25)}
-  .wh{display:flex;align-items:center;gap:11px;padding:14px 14px;cursor:pointer}
-  .wnum{font-family:var(--disp);font-size:22px;color:var(--ink);min-width:150px;text-transform:uppercase;transform:skewX(-7deg);letter-spacing:.02em}
+  .wh{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+  .wleft{display:flex;flex-direction:column;min-width:118px}
+  .wnum{font-family:var(--disp);font-size:20px;color:var(--ink);text-transform:uppercase;transform:skewX(-7deg);letter-spacing:.02em}
   .wk.done .wnum{color:var(--g2)}
-  .badge{font-family:var(--disp);font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:3px 12px;border-radius:3px;transform:skewX(-9deg)}
+  .wsub{font-family:var(--body);font-size:10px;color:var(--mut2);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+  .badge{font-family:var(--disp);font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 11px;border-radius:3px;transform:skewX(-9deg)}
   .badge.heavy{color:var(--black);background:var(--g)}
-  .badge.pump{color:var(--lime);background:transparent;border:2px solid var(--lime);padding:1px 10px}
-  .wcount{margin-left:auto;font-family:var(--disp);font-size:16px;color:var(--mut)}
+  .badge.pump{color:var(--lime);background:transparent;border:2px solid var(--lime);padding:1px 9px}
+  .wcount{margin-left:auto;font-family:var(--disp);font-size:15px;color:var(--mut)}
   .wk.done .wcount{color:var(--g2)}
   .caret{font-size:12px;color:var(--mut);transition:transform .2s}
   .caret.open{transform:rotate(90deg)}
@@ -907,7 +921,7 @@ renderScore();renderDecs();renderList();renderCase();
   .exd{font-size:14px;color:var(--mut);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.03em}
   .exd b{color:var(--lime);font-weight:700}
   .sets{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
-  .set{min-width:60px;height:46px;padding:0 8px;border-radius:4px;border:2px solid var(--line);background:#0b1a10;
+  .set{min-width:60px;height:46px;padding:0 8px;border-radius:4px;border:2px solid var(--line);background:#0b1a11;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
     font-family:var(--disp);font-size:13px;color:var(--mut2);letter-spacing:.04em;text-transform:uppercase;transition:all .1s}
   .set.on{background:var(--g);border-color:var(--lime);color:var(--black);box-shadow:0 0 12px rgba(0,194,74,.6),3px 3px 0 rgba(0,0,0,.4)}
@@ -931,7 +945,7 @@ renderScore();renderDecs();renderList();renderCase();
 
 <div class=&quot;stats&quot;>
   <div class=&quot;stat&quot;><b id=&quot;s-done&quot;>0</b><span>Workouts</span></div>
-  <div class=&quot;stat&quot;><b id=&quot;s-total&quot;>22</b><span>Total</span></div>
+  <div class=&quot;stat&quot;><b id=&quot;s-total&quot;>50</b><span>Total</span></div>
   <div class=&quot;stat&quot;><b id=&quot;s-sets&quot;>0</b><span>Sets</span></div>
 </div>
 <div class=&quot;pwrap&quot;><div class=&quot;pbar&quot; id=&quot;pbar&quot; style=&quot;width:0&quot;></div></div>
@@ -942,20 +956,70 @@ renderScore();renderDecs();renderList();renderCase();
 
 <script>
 const KEY=&quot;gunshow-v1&quot;;
-const HEAVY=[
-  {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
-  {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;},
-  {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:8, wt:&quot;20 lb&quot;},
-  {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;}
-];
-const PUMP=[
-  {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:15, wt:&quot;20 lb&quot;},
-  {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
-  {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;},
-  {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;}
+// 5 phases of gradual progression. Each phase = 10 workouts (5 Heavy / 5 Pump).
+// Load climbs from light foundation work to heavy, high-volume strength work.
+const PHASES=[
+  {name:&quot;Foundation&quot;,
+   heavy:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;},
+     {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:8, wt:&quot;20 lb&quot;},
+     {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;}],
+   pump:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
+     {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
+     {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;}]},
+  {name:&quot;Build&quot;,
+   heavy:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;},
+     {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:8, wt:&quot;20 lb&quot;},
+     {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:3, reps:10, wt:&quot;20 lb&quot;}],
+   pump:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;},
+     {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;},
+     {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;}]},
+  {name:&quot;Strength&quot;,
+   heavy:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:10, wt:&quot;20 lb&quot;},
+     {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:8, wt:&quot;20 lb&quot;},
+     {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:4, reps:10, wt:&quot;20 lb&quot;}],
+   pump:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:12, wt:&quot;20 lb&quot;},
+     {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:3, reps:12, wt:&quot;10 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:12, wt:&quot;20 lb&quot;},
+     {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:3, reps:15, wt:&quot;10 lb&quot;}]},
+  {name:&quot;Power&quot;,
+   heavy:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:4, reps:8, wt:&quot;20 lb&quot;},
+     {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:4, reps:10, wt:&quot;20 lb&quot;}],
+   pump:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:15, wt:&quot;20 lb&quot;},
+     {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:4, reps:12, wt:&quot;20 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:15, wt:&quot;20 lb&quot;},
+     {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:4, reps:15, wt:&quot;10 lb&quot;}]},
+  {name:&quot;Peak&quot;,
+   heavy:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:5, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Concentration Curl&quot;, tag:&quot;per arm&quot;, sets:4, reps:8, wt:&quot;30 lb&quot;},
+     {n:&quot;Overhead Triceps Extension&quot;, tag:&quot;&quot;, sets:5, reps:10, wt:&quot;20 lb&quot;}],
+   pump:[
+     {n:&quot;Dumbbell Curl&quot;, tag:&quot;both arms&quot;, sets:5, reps:15, wt:&quot;20 lb&quot;},
+     {n:&quot;Alternating Curl&quot;, tag:&quot;per arm&quot;, sets:4, reps:15, wt:&quot;20 lb&quot;},
+     {n:&quot;Hammer Curl&quot;, tag:&quot;both arms&quot;, sets:5, reps:15, wt:&quot;20 lb&quot;},
+     {n:&quot;Triceps Kickbacks&quot;, tag:&quot;&quot;, sets:4, reps:15, wt:&quot;20 lb&quot;}]}
 ];
 const WORKOUTS=[];
-for(let i=0;i<22;i++){ const heavy=(i%2===0); WORKOUTS.push({type:heavy?&quot;Heavy&quot;:&quot;Pump&quot;, ex:heavy?HEAVY:PUMP}); }
+for(let i=0;i<50;i++){
+  const phase=Math.floor(i/10), heavy=(i%2===0), p=PHASES[phase];
+  WORKOUTS.push({type:heavy?&quot;Heavy&quot;:&quot;Pump&quot;, phase, phaseName:p.name, ex:heavy?p.heavy:p.pump});
+}
 
 let state=load(), expanded=null, clearStep=0;
 function load(){try{const v=localStorage.getItem(KEY);if(v)return JSON.parse(v)||{};}catch(e){}return {};}
@@ -973,19 +1037,17 @@ window.toggleWk=(wi)=>{expanded=(expanded===wi)?-1:wi;render();};
 function firstIncomplete(){for(let i=0;i<WORKOUTS.length;i++){if(!wkDone(i))return i;}return -1;}
 
 function exBlock(wi,ei){
-  const e=WORKOUTS[wi].ex[ei];
-  const tiles=[];
+  const e=WORKOUTS[wi].ex[ei], tiles=[];
   for(let s=0;s<e.sets;s++){tiles.push(`<div class=&quot;set ${setOn(wi,ei,s)?'on':''}&quot; onclick=&quot;togSet(${wi},${ei},${s})&quot;>SET ${s+1}</div>`);}
   const detail=`<b>${e.sets} &amp;times; ${e.reps}</b> &amp;middot; ${e.wt}${e.tag?` &amp;middot; ${e.tag}`:''}`;
   return `<div class=&quot;ex&quot;><div class=&quot;exn&quot;>${e.n}</div><div class=&quot;exd&quot;>${detail}</div><div class=&quot;sets&quot;>${tiles.join(&quot;&quot;)}</div></div>`;
 }
-
 function wkCard(wi){
   const w=WORKOUTS[wi], done=wkDone(wi), open=(expanded===wi);
   const body=w.ex.map((e,ei)=>exBlock(wi,ei)).join(&quot;&quot;)+`<button class=&quot;wdone-btn&quot; onclick=&quot;completeWorkout(${wi})&quot;>Mark Workout Complete</button>`;
   return `<div class=&quot;wk ${done?'done':''}&quot; id=&quot;wk_${wi}&quot;>
     <div class=&quot;wh&quot; onclick=&quot;toggleWk(${wi})&quot;>
-      <span class=&quot;wnum&quot;>Workout ${wi+1}</span>
+      <span class=&quot;wleft&quot;><span class=&quot;wnum&quot;>Workout ${wi+1}</span><span class=&quot;wsub&quot;>Phase ${w.phase+1} &amp;middot; ${w.phaseName}</span></span>
       <span class=&quot;badge ${w.type.toLowerCase()}&quot;>${w.type}</span>
       <span class=&quot;wcount&quot;>${wkDoneSets(wi)}/${wkTotalSets(wi)}</span>
       <span class=&quot;caret ${open?'open':''}&quot;>&amp;#9656;</span>
@@ -993,7 +1055,6 @@ function wkCard(wi){
     <div class=&quot;wbody ${open?'open':''}&quot;>${body}</div>
   </div>`;
 }
-
 function refresh(wi){
   const el=document.getElementById(&quot;wk_&quot;+wi);
   if(el){const t=document.createElement(&quot;div&quot;);t.innerHTML=wkCard(wi);el.replaceWith(t.firstElementChild);}
@@ -1007,7 +1068,12 @@ function renderStats(){
 }
 function render(){
   if(expanded===null)expanded=firstIncomplete();
-  document.getElementById(&quot;list&quot;).innerHTML=WORKOUTS.map((w,i)=>wkCard(i)).join(&quot;&quot;);
+  let html=&quot;&quot;, lastPhase=-1;
+  WORKOUTS.forEach((w,i)=>{
+    if(w.phase!==lastPhase){html+=`<div class=&quot;phdr&quot;>Phase ${w.phase+1} <span>&amp;middot; ${w.phaseName}</span></div>`;lastPhase=w.phase;}
+    html+=wkCard(i);
+  });
+  document.getElementById(&quot;list&quot;).innerHTML=html;
   renderStats();
 }
 window.resetAll=()=>{
