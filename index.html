@@ -30,8 +30,10 @@
   .tabs button.on.tv{color:#19e0ff;border-bottom-color:#19e0ff;text-shadow:0 0 12px rgba(25,224,255,.55)}
   .tabs button.on.nba{color:#ff8a1e;border-bottom-color:#ff8a1e;text-shadow:0 0 12px rgba(255,138,30,.55)}
   .tabs button.on.gun{color:#00e657;border-bottom-color:#00c24a;text-shadow:0 0 12px rgba(0,194,74,.6)}
-  .frames{position:relative;flex:1;min-height:0;border-radius:0 0 30px 30px;overflow:hidden}
-  .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#05070e;display:none}
+  /* Outer scroll container: the page scrolls here, each iframe is sized to its full content height. */
+  .frames{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    border-radius:0 0 30px 30px;background:#05070e}
+  .frames iframe{display:none;width:100%;border:0;background:#05070e;vertical-align:top}
   .frames iframe.on{display:block}
 </style>
 </head>
@@ -41,7 +43,7 @@
     <button id="t-nba" class="nba" onclick="show('nba')">Finals</button>
     <button id="t-gun" class="gun" onclick="show('gun')">Bolt</button>
   </div>
-  <div class="frames">
+  <div class="frames" id="frames">
     <iframe id="f-tv" class="on" title="Series" srcdoc="<!DOCTYPE html>
 <html lang=&quot;en&quot;>
 <head>
@@ -194,13 +196,7 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 #ledger.scroll::-webkit-scrollbar-track{background:transparent}
 </style>
 <style>
-  html{height:100%;}
-  body{height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:14px;padding-bottom:96px;}
-  .bkup{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:11px 12px;border-radius:12px;background:rgba(25,224,255,.08);border:1px solid rgba(25,224,255,.35);color:#bfefff;font-size:13px;font-family:system-ui,-apple-system,sans-serif}
-  .bkup.hidden{display:none}
-  .bkup span{flex:1;line-height:1.3}
-  .bkup-save{background:#19e0ff;color:#04121a;border:0;border-radius:8px;padding:7px 12px;font-weight:700;font-family:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
-  .bkup-x{background:none;border:0;color:#7fb9cc;font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+  body{padding-top:14px;padding-bottom:44px;}
   #clr.undo{color:#19e0ff;border-color:#19e0ff}
 </style>
 </head>
@@ -216,7 +212,6 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
     <input class=&quot;search&quot; id=&quot;search&quot; placeholder=&quot;Search shows&quot; oninput=&quot;onSearch(this.value)&quot;>
     <div class=&quot;azbar&quot; id=&quot;azbar&quot;></div>
   </div>
-  <div id=&quot;bkupbanner&quot; class=&quot;bkup hidden&quot;><span id=&quot;bkupmsg&quot;></span><button class=&quot;bkup-save&quot; onclick=&quot;doExport()&quot;>Save now</button><button class=&quot;bkup-x&quot; onclick=&quot;dismissBanner()&quot; aria-label=&quot;Dismiss&quot;>&amp;times;</button></div>
   <div id=&quot;list&quot;></div>
   <div class=&quot;ledgerwrap&quot;><button class=&quot;lhead&quot; onclick=&quot;toggleLedger()&quot;><span>Season Ratings</span><span class=&quot;lcount&quot; id=&quot;lcount&quot;></span><span class=&quot;lcaret&quot; id=&quot;lcaret&quot;>&amp;#9656;</span></button><div id=&quot;ledger&quot; class=&quot;hidden&quot;></div></div>
   <div class=&quot;data&quot;>
@@ -365,7 +360,7 @@ window.onImport=ev=>{
     state.w=normKeys(o.w);state.r=normKeys(o.r||{});save();renderList();renderScore();renderLedger();markBackedUp();flash(&quot;Backup restored&quot;);}catch(e){flash(&quot;Could not read file&quot;);}};
   r.onerror=()=>flash(&quot;Could not read file&quot;);r.readAsText(f);
 };
-let undoAvail=false, bannerDismissed=false;
+let undoAvail=false;
 window.onClear=()=>{
   const b=document.getElementById(&quot;clr&quot;);
   if(undoAvail){doUndoClear();return;}
@@ -375,7 +370,7 @@ window.onClear=()=>{
     try{localStorage.setItem(UKEY,JSON.stringify(state));}catch(e){}
     state={w:{},r:{}};save();expanded={};clearStep=0;
     b.className=&quot;undo&quot;;b.textContent=&quot;Undo clear&quot;;undoAvail=true;
-    renderList();renderScore();renderLedger();updateBackupBanner();
+    renderList();renderScore();renderLedger();
     clearTimeout(clearTimer);clearTimer=setTimeout(()=>{undoAvail=false;b.className=&quot;&quot;;b.textContent=&quot;Clear everything&quot;;},15000);
     return;
   }
@@ -385,27 +380,34 @@ function doUndoClear(){
   try{const v=localStorage.getItem(UKEY);if(v){const o=JSON.parse(v);state.w=o.w||{};state.r=o.r||{};save();}}catch(e){}
   undoAvail=false;clearTimeout(clearTimer);
   const b=document.getElementById(&quot;clr&quot;);b.className=&quot;&quot;;b.textContent=&quot;Clear everything&quot;;
-  renderList();renderScore();renderLedger();updateBackupBanner();flash(&quot;Progress restored&quot;);
+  renderList();renderScore();renderLedger();flash(&quot;Progress restored&quot;);
 }
-function markBackedUp(){try{localStorage.setItem(LKEY,new Date().toISOString());}catch(e){}bannerDismissed=false;updateBackupBanner();}
-function daysSince(iso){const t=Date.parse(iso);return isNaN(t)?Infinity:(Date.now()-t)/86400000;}
-function updateBackupBanner(){
-  const el=document.getElementById(&quot;bkupbanner&quot;);if(!el)return;
-  const hasData=Object.keys(state.w).length>0, last=localStorage.getItem(LKEY), d=daysSince(last);
-  if(bannerDismissed||!hasData||d<7){el.classList.add(&quot;hidden&quot;);return;}
-  document.getElementById(&quot;bkupmsg&quot;).textContent = last
-    ? &quot;It's been &quot;+Math.floor(d)+&quot; days since your last backup.&quot;
-    : &quot;Protect your progress \u2014 save a backup you can restore anytime.&quot;;
-  el.classList.remove(&quot;hidden&quot;);
+function markBackedUp(){try{localStorage.setItem(LKEY,new Date().toISOString());}catch(e){}}
+// Automatic on-device snapshot, at most once every ~30 days.
+const MKEY=&quot;afterglow-monthly&quot;, MDKEY=&quot;afterglow-monthly-date&quot;;
+function autoMonthly(){
+  try{
+    if(Object.keys(state.w).length===0)return;
+    const last=localStorage.getItem(MDKEY);
+    const due=!last || (Date.now()-Date.parse(last))/86400000>=30;
+    if(due){localStorage.setItem(MKEY,JSON.stringify({w:state.w,r:state.r,at:new Date().toISOString()}));localStorage.setItem(MDKEY,new Date().toISOString());}
+  }catch(e){}
 }
-window.dismissBanner=()=>{bannerDismissed=true;document.getElementById(&quot;bkupbanner&quot;).classList.add(&quot;hidden&quot;);};
 
 const AZ=['#','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 function renderAZ(items){
   const have=new Set(items.map(bucket));
   document.getElementById(&quot;azbar&quot;).innerHTML=AZ.map(L=>`<button ${have.has(L)?'':'disabled'} onclick=&quot;jumpTo('${L}')&quot;>${L}</button>`).join(&quot;&quot;);
 }
-window.jumpTo=L=>{const el=document.querySelector('#list .card[data-letter=&quot;'+L+'&quot;]');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
+window.jumpTo=L=>{
+  const el=document.querySelector('#list .card[data-letter=&quot;'+L+'&quot;]');if(!el)return;
+  let inFrame=false;try{inFrame=window.parent&amp;&amp;window.parent!==window;}catch(e){inFrame=false;}
+  if(inFrame){try{
+    const pf=window.parent.document.querySelector('.frames');
+    if(pf){const y=el.getBoundingClientRect().top-document.body.getBoundingClientRect().top;pf.scrollTo({top:Math.max(0,y-6),behavior:'smooth'});return;}
+  }catch(e){}}
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+};
 window.setSeasonRate=(eid,se,val)=>{
   const id=decodeURIComponent(eid),s=findShow(id),k=sk(id,se);
   let n=parseInt(val,10);
@@ -427,7 +429,7 @@ function renderLedger(){
   el.classList.toggle(&quot;scroll&quot;,rows.length>10);
   el.innerHTML=rows.map(r=>`<div class=&quot;lrow&quot;><div class=&quot;lt&quot;>${esc(r.t)}<span class=&quot;lavg&quot;>${r.showAvg}</span></div><div class=&quot;lsegs&quot;>${r.segs.map(x=>`<span class=&quot;lseg&quot;>S${x.n} <b>${x.avg}</b></span>`).join(&quot;&quot;)}</div></div>`).join(&quot;&quot;);
 }
-renderScore();renderFilters();renderList();renderLedger();updateBackupBanner();
+renderScore();renderFilters();renderList();renderLedger();autoMonthly();
 </script>
 </body>
 </html>
@@ -618,8 +620,7 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 @media (prefers-reduced-motion:reduce){.game.on .ball{animation:none}.champword{animation:none}.boomtag{animation:none}.cfx{display:none}}
 </style>
 <style>
-  html{height:100%;}
-  body{height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:14px;padding-bottom:96px;}
+  body{padding-top:14px;padding-bottom:44px;}
 </style>
 </head>
 <body>
@@ -901,14 +902,13 @@ renderScore();renderDecs();renderList();renderCase();
     --disp:'Anton',sans-serif; --body:'Oswald',sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{height:100%}
-  body{margin:0;height:100%;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  body{margin:0;
     background:
       repeating-linear-gradient(115deg, rgba(0,194,74,.05) 0 2px, transparent 2px 26px),
       radial-gradient(1100px 460px at 50% -8%, rgba(0,194,74,.18), transparent 62%),
       var(--bg);
     color:var(--ink);font-family:var(--body);line-height:1.2;
-    padding:14px 15px 96px;
+    padding:14px 15px 44px;
     background-attachment:fixed}
 
   .cap{position:relative;margin:0 -15px 20px;padding:22px 15px 20px;overflow:hidden;
@@ -1129,6 +1129,32 @@ render();
 <script>
   var frames={tv:'f-tv',nba:'f-nba',gun:'f-gun'};
   var holders={nba:'nba-holder',gun:'gun-holder'};
+  var scroller=document.getElementById('frames');
+
+  function fit(f){
+    try{
+      var d=f.contentWindow.document;
+      var h=Math.max(d.body.scrollHeight,d.documentElement.scrollHeight);
+      if(h>0) f.style.height=h+'px';
+    }catch(e){}
+  }
+  function attach(f){
+    try{
+      var d=f.contentWindow.document;
+      fit(f);
+      if(window.ResizeObserver){ new ResizeObserver(function(){fit(f);}).observe(d.body); }
+      d.addEventListener('click',function(){ setTimeout(function(){fit(f);},50); setTimeout(function(){fit(f);},350); });
+      // periodic safety net for late layout (fonts, images, dynamic content)
+      var n=0,iv=setInterval(function(){fit(f);if(++n>20)clearInterval(iv);},400);
+    }catch(e){}
+  }
+  Object.keys(frames).forEach(function(k){
+    var f=document.getElementById(frames[k]);
+    f.addEventListener('load',function(){ attach(f); });
+  });
+  // TV frame loads from inline srcdoc; ensure it's sized even if load already fired
+  window.addEventListener('load',function(){ attach(document.getElementById('f-tv')); });
+
   function show(which){
     var f=document.getElementById(frames[which]);
     if(holders[which] && !f.getAttribute('srcdoc')){ f.srcdoc=document.getElementById(holders[which]).dataset.doc; }
@@ -1136,6 +1162,8 @@ render();
       document.getElementById(frames[k]).classList.toggle('on', k===which);
       document.getElementById('t-'+k).classList.toggle('on', k===which);
     }
+    scroller.scrollTop=0;
+    setTimeout(function(){fit(f);},60); setTimeout(function(){fit(f);},400);
   }
 </script>
 </body>
