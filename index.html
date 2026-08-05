@@ -18,8 +18,7 @@
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
   body{display:flex;flex-direction:column;height:100vh;height:100dvh;background:#05070e;
-    font-family:'Orbitron',system-ui,-apple-system,sans-serif;overflow:hidden;
-    padding-bottom:env(safe-area-inset-bottom)}
+    font-family:'Orbitron',system-ui,-apple-system,sans-serif;overflow:hidden}
   .tabs{display:flex;flex-shrink:0;padding-top:env(safe-area-inset-top);
     background:#080b12;border-bottom:1px solid #1d2940}
   .tabs button{flex:1;padding:15px 0 13px;background:none;border:0;
@@ -30,9 +29,9 @@
   .tabs button.on.tv{color:#19e0ff;border-bottom-color:#19e0ff;text-shadow:0 0 12px rgba(25,224,255,.55)}
   .tabs button.on.nba{color:#ff8a1e;border-bottom-color:#ff8a1e;text-shadow:0 0 12px rgba(255,138,30,.55)}
   .tabs button.on.gun{color:#00e657;border-bottom-color:#00c24a;text-shadow:0 0 12px rgba(0,194,74,.6)}
-  /* Outer scroll container: the page scrolls here, each iframe is sized to its full content height. */
-  .frames{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    border-radius:0 0 30px 30px;background:#05070e}
+  /* Outer scroll container: the page scrolls here, each iframe is sized to its full content height.
+     Runs flush to the physical bottom edge of the screen, no gap, no rounding. */
+  .frames{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#05070e}
   .frames iframe{display:none;width:100%;border:0;background:#05070e;vertical-align:top}
   .frames iframe.on{display:block}
 </style>
@@ -1144,7 +1143,6 @@ render();
       fit(f);
       if(window.ResizeObserver){ new ResizeObserver(function(){fit(f);}).observe(d.body); }
       d.addEventListener('click',function(){ setTimeout(function(){fit(f);},50); setTimeout(function(){fit(f);},350); });
-      // periodic safety net for late layout (fonts, images, dynamic content)
       var n=0,iv=setInterval(function(){fit(f);if(++n>20)clearInterval(iv);},400);
     }catch(e){}
   }
@@ -1152,7 +1150,6 @@ render();
     var f=document.getElementById(frames[k]);
     f.addEventListener('load',function(){ attach(f); });
   });
-  // TV frame loads from inline srcdoc; ensure it's sized even if load already fired
   window.addEventListener('load',function(){ attach(document.getElementById('f-tv')); });
 
   function show(which){
