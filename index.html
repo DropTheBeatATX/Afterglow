@@ -594,6 +594,7 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 .data button:hover{border-color:var(--cyan);color:var(--cyan)}
 .dmsg{text-align:center;color:var(--volt);font-weight:700;font-size:13px;letter-spacing:.04em;margin-top:12px;text-transform:uppercase}
 .reset{text-align:center;margin-top:18px}
+.buildtag{text-align:center;margin-top:10px;font-family:var(--body);font-size:10px;color:#3a4a52;letter-spacing:1px}
 .reset button{background:transparent;border:none;color:var(--mut2);font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-decoration:underline}
 .reset button.arm{color:var(--flame)}
 .reset button.dang{color:#ff5a5a}
@@ -662,6 +663,7 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
   </div>
   <div class=&quot;dmsg&quot; id=&quot;dmsg&quot;></div>
   <div class=&quot;reset&quot;><button id=&quot;clr&quot; onclick=&quot;onClear()&quot;>Clear everything</button></div>
+  <div class=&quot;buildtag&quot;>build fj-12</div>
 </div>
 <div id=&quot;celmount&quot;></div>
 <script>
@@ -816,7 +818,7 @@ function scrollToCard(el){
       }
     }catch(e){}
   }
-  el.scrollIntoView({behavior:'smooth',block:'start'});
+  try{el.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}
 }
 window.gotoFinal=y=>{
   decade=&quot;all&quot;;query=&quot;&quot;;
