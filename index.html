@@ -491,6 +491,12 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 .search:focus{border-color:var(--cyan);box-shadow:0 0 12px rgba(25,224,255,.3)}
 .search::placeholder{color:var(--mut2)}
 .sec{font-family:var(--disp);font-size:14px;letter-spacing:1px;color:var(--cyan);text-shadow:0 0 12px rgba(25,224,255,.4);margin:26px 2px 12px;text-transform:uppercase}
+.watchwrap{margin:16px 0 4px;padding:14px 12px 6px;border-radius:14px;
+  background:linear-gradient(160deg,rgba(255,106,26,.16),rgba(255,196,0,.05));
+  border:2px solid var(--flame);box-shadow:0 0 22px rgba(255,106,26,.35),inset 0 0 24px rgba(255,106,26,.06)}
+.watchhdr{font-family:var(--disp);font-size:17px;letter-spacing:1px;color:var(--volt);
+  text-shadow:0 0 14px rgba(255,196,0,.6);text-transform:uppercase;margin:2px 4px 10px}
+.wempty{font-family:var(--body);font-size:13px;color:var(--mut);padding:6px 4px 14px;line-height:1.5}
 .badge{display:inline-flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:13px;min-width:46px;height:28px;padding:0 9px;border-radius:6px;letter-spacing:1px;border:1.5px solid rgba(0,0,0,.45);flex-shrink:0;line-height:1}
 .badge.sm{font-size:10px;min-width:36px;height:21px;padding:0 6px;border-radius:5px;letter-spacing:.5px}
 .badge.big{font-size:16px;min-width:60px;height:40px}
@@ -625,6 +631,12 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
   <div class=&quot;hdr&quot;>
     <h1 class=&quot;title&quot;>Finals<br>Jam</h1>
     <div class=&quot;tag&quot;>Every NBA Finals since 1990</div>
+  </div>
+  <div class=&quot;watchwrap&quot; id=&quot;watchwrap&quot;>
+    <div class=&quot;watchhdr&quot;>&amp;#128293; Watching Now</div>
+    <div id=&quot;watching&quot;></div>
+  </div>
+  <div class=&quot;hdr2&quot;>
     <div class=&quot;score&quot; id=&quot;score&quot;></div>
   </div>
   <div class=&quot;controls&quot;>
@@ -681,7 +693,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function gid(y,n){return y+&quot;-&quot;+n;}
 function isOn(y,n){return !!state.watched[gid(y,n)];}
 function getMin(y,n){return state.mins[gid(y,n)]||'';}
-window.setMin=(y,n,val)=>{const k=gid(y,n);let m=parseInt(val,10);if(isNaN(m)||m<=0)delete state.mins[k];else state.mins[k]=Math.min(m,200);save();};
+window.setMin=(y,n,val)=>{const k=gid(y,n);let m=parseInt(val,10);if(isNaN(m)||m<=0)delete state.mins[k];else state.mins[k]=Math.min(m,200);save();renderWatching();};
 function finalsDone(f){return f.g.every(x=>isOn(f.y,x.n));}
 const esc=s=>s.replace(/&amp;/g,&quot;&amp;amp;&quot;).replace(/</g,&quot;&amp;lt;&quot;).replace(/>/g,&quot;&amp;gt;&quot;);
 function badge(team,cls){
@@ -715,6 +727,7 @@ function matchQuery(f){
   if((f.c+&quot; &quot;+f.r).toLowerCase().includes(query))return true;
   return f.g.some(x=>(x.a+&quot; &quot;+x.h).toLowerCase().includes(query));
 }
+function hasProgress(f){return f.g.some(x=>isOn(f.y,x.n)||!!getMin(f.y,x.n));}
 function inDecade(f){return decade===&quot;all&quot;||Math.floor(f.y/10)*10===+decade;}
 
 function gameRow(f,x){
@@ -765,6 +778,13 @@ function card(f){
     <div class=&quot;games&quot;><div class=&quot;gltitle&quot;>Game Log</div>${done?`<button class=&quot;recapbtn&quot; onclick=&quot;recap(${f.y})&quot;>View series recap</button>`:''}${f.g.map(x=>gameRow(f,x)).join(&quot;&quot;)}</div>
   </div>`;
 }
+function renderWatching(){
+  const items=FINALS.filter(hasProgress);
+  const box=document.getElementById(&quot;watching&quot;);
+  box.innerHTML = items.length
+    ? items.map(card).join(&quot;&quot;)
+    : `<div class=&quot;wempty&quot;>Nothing in progress yet. Tap a game below to mark it watched, or log minutes on any game, and it'll show up here.</div>`;
+}
 function renderList(){
   const items=FINALS.filter(f=>inDecade(f)&amp;&amp;matchQuery(f));
   document.getElementById(&quot;list&quot;).innerHTML = items.length
@@ -777,7 +797,7 @@ function renderCase(){
         `<div class=&quot;tro&quot;>${badge(f.c,&quot;sm&quot;)}<div><div class=&quot;ty&quot;>${f.y}</div><div class=&quot;tc&quot;>${esc(f.c)}</div></div></div>`).join(&quot;&quot;)+`</div>`
     : `<div class=&quot;empty&quot;>Finish every game in a Finals to reveal the champion and raise the trophy.</div>`;
 }
-function renderAll(){renderScore();renderList();renderCase();}
+function renderAll(){renderScore();renderWatching();renderList();renderCase();}
 
 window.exp=y=>{expanded[y]=!expanded[y];renderList();};
 window.tog=(y,n)=>{
@@ -877,7 +897,7 @@ window.onClear=()=>{
   clearTimer=setTimeout(()=>{clearStep=0;b.className=&quot;&quot;;b.textContent=&quot;Clear everything&quot;;},3500);
 };
 
-renderScore();renderDecs();renderList();renderCase();
+renderScore();renderWatching();renderDecs();renderList();renderCase();
 </script>
 </body>
 </html>
