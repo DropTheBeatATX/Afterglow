@@ -497,6 +497,15 @@ body::before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;z-i
 .watchhdr{font-family:var(--disp);font-size:17px;letter-spacing:1px;color:var(--volt);
   text-shadow:0 0 14px rgba(255,196,0,.6);text-transform:uppercase;margin:2px 4px 10px}
 .wempty{font-family:var(--body);font-size:13px;color:var(--mut);padding:6px 4px 14px;line-height:1.5}
+.wlink{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.22);border:1px solid rgba(255,196,0,.25);
+  border-radius:10px;padding:11px 12px;margin-bottom:8px;cursor:pointer}
+.wlink:last-child{margin-bottom:2px}
+.wlink:active{background:rgba(255,196,0,.1)}
+.wlmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.wyear{font-family:var(--disp);font-size:12px;color:var(--volt);letter-spacing:.5px}
+.wteams{font-family:var(--body);font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wprog{font-family:var(--body);font-size:11px;color:var(--mut);white-space:nowrap;flex-shrink:0}
+.warrow{font-size:20px;color:var(--flame);flex-shrink:0}
 .badge{display:inline-flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:13px;min-width:46px;height:28px;padding:0 9px;border-radius:6px;letter-spacing:1px;border:1.5px solid rgba(0,0,0,.45);flex-shrink:0;line-height:1}
 .badge.sm{font-size:10px;min-width:36px;height:21px;padding:0 6px;border-radius:5px;letter-spacing:.5px}
 .badge.big{font-size:16px;min-width:60px;height:40px}
@@ -768,7 +777,7 @@ function card(f){
   const status = done
     ? `<span class=&quot;tstatus champ&quot;>&amp;#9733; Champions</span>`
     : `<span class=&quot;tstatus&quot;>${seen}/${len} logged</span>`;
-  return `<div class=&quot;card ${done?'done':''} ${open?'open':''}&quot; style=&quot;--c1:${c1};--c2:${c2}&quot;>
+  return `<div class=&quot;card ${done?'done':''} ${open?'open':''}&quot; data-year=&quot;${f.y}&quot; style=&quot;--c1:${c1};--c2:${c2}&quot;>
     <div class=&quot;chead&quot; onclick=&quot;exp(${f.y})&quot;>
       ${photo}
       <div class=&quot;tplate&quot;>${plate}</div>
@@ -778,13 +787,47 @@ function card(f){
     <div class=&quot;games&quot;><div class=&quot;gltitle&quot;>Game Log</div>${done?`<button class=&quot;recapbtn&quot; onclick=&quot;recap(${f.y})&quot;>View series recap</button>`:''}${f.g.map(x=>gameRow(f,x)).join(&quot;&quot;)}</div>
   </div>`;
 }
+function watchLink(f){
+  const done=finalsDone(f), seen=f.g.filter(x=>isOn(f.y,x.n)).length, len=f.g.length;
+  const label=done?`${esc(f.c)} def. ${esc(f.r)}`:`${esc(f.g[0].a)} vs ${esc(f.g[0].h)}`;
+  return `<div class=&quot;wlink&quot; onclick=&quot;gotoFinal(${f.y})&quot;>
+    <div class=&quot;wlmain&quot;><span class=&quot;wyear&quot;>${f.y}</span><span class=&quot;wteams&quot;>${label}</span></div>
+    <span class=&quot;wprog&quot;>${done?'&amp;#9733; Champions':seen+'/'+len+' logged'}</span>
+    <span class=&quot;warrow&quot;>&amp;#8250;</span>
+  </div>`;
+}
 function renderWatching(){
-  const items=FINALS.filter(hasProgress);
+  const items=FINALS.filter(hasProgress).sort((a,b)=>b.y-a.y);
   const box=document.getElementById(&quot;watching&quot;);
   box.innerHTML = items.length
-    ? items.map(card).join(&quot;&quot;)
+    ? items.map(watchLink).join(&quot;&quot;)
     : `<div class=&quot;wempty&quot;>Nothing in progress yet. Tap a game below to mark it watched, or log minutes on any game, and it'll show up here.</div>`;
 }
+function scrollToCard(el){
+  let inFrame=false;
+  try{inFrame=window.parent&amp;&amp;window.parent!==window;}catch(e){inFrame=false;}
+  if(inFrame){
+    try{
+      const pf=window.parent.document.querySelector('.frames');
+      if(pf){
+        const y=el.getBoundingClientRect().top-document.body.getBoundingClientRect().top;
+        pf.scrollTo({top:Math.max(0,y-10),behavior:'smooth'});
+        return;
+      }
+    }catch(e){}
+  }
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+window.gotoFinal=y=>{
+  decade=&quot;all&quot;;query=&quot;&quot;;
+  const s=document.getElementById(&quot;search&quot;);if(s)s.value=&quot;&quot;;
+  expanded[y]=true;
+  renderDecs();renderList();
+  requestAnimationFrame(()=>{
+    const el=document.querySelector('#list .card[data-year=&quot;'+y+'&quot;]');
+    if(el)scrollToCard(el);
+  });
+};
 function renderList(){
   const items=FINALS.filter(f=>inDecade(f)&amp;&amp;matchQuery(f));
   document.getElementById(&quot;list&quot;).innerHTML = items.length
